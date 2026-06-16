@@ -1000,7 +1000,9 @@ function showPaymentModal(type, price, coinsAmount, fenixAmount, name) {
 
 // REFERRAL
 function copyRef() {
-  navigator.clipboard.writeText('https://fenix.app/ref/USER123456').catch(() => {});
+  const refLink = 'https://t.me/Fenixtoken_bot?start=ref';
+  document.getElementById('refLink').textContent = refLink;
+  navigator.clipboard.writeText(refLink).catch(() => {});
   showToast('📋 Ссылка скопирована!');
 }
 
