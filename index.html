@@ -1,73 +1,1029 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FENIX TAPPER 🐦‍🔥</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap');
+
+  :root {
+    --fire1: #FF4500;
+    --fire2: #FF8C00;
+    --fire3: #FFD700;
+    --dark: #0A0A0F;
+    --dark2: #12121A;
+    --dark3: #1A1A28;
+    --card: #1E1E2E;
+    --border: rgba(255,140,0,0.2);
+    --text: #F0E6D3;
+    --muted: #8A7A6A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated fire background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 50% 100%, rgba(255,69,0,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 20% 80%, rgba(255,140,0,0.08) 0%, transparent 40%),
+      radial-gradient(ellipse at 80% 80%, rgba(255,69,0,0.08) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 16px;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0 20px;
+  }
+
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 20px;
+    background: linear-gradient(90deg, var(--fire1), var(--fire3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .level-badge {
+    background: linear-gradient(135deg, var(--fire1), var(--fire2));
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Orbitron', monospace;
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .stat-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--fire3);
+  }
+
+  /* Main coin counter */
+  .coin-display {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .coin-amount {
+    font-family: 'Orbitron', monospace;
+    font-size: 36px;
+    font-weight: 900;
+    background: linear-gradient(180deg, var(--fire3), var(--fire2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+  }
+
+  .coin-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* TAP BUTTON */
+  .tap-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0 20px;
+    position: relative;
+  }
+
+  .tap-btn {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    background: radial-gradient(circle at 40% 35%, #FF8C00, #FF4500 50%, #8B1A00);
+    box-shadow: 
+      0 0 40px rgba(255,69,0,0.4),
+      0 0 80px rgba(255,140,0,0.2),
+      inset 0 2px 10px rgba(255,215,0,0.3);
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .tap-btn:active {
+    transform: scale(0.93);
+    box-shadow: 
+      0 0 20px rgba(255,69,0,0.6),
+      0 0 40px rgba(255,140,0,0.3),
+      inset 0 2px 10px rgba(255,215,0,0.5);
+  }
+
+  .tap-btn-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 72px;
+    line-height: 1;
+  }
+
+  .tap-hint {
+    font-size: 11px;
+    color: rgba(255,215,0,0.7);
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-top: 4px;
+  }
+
+  /* Floating +1 animation */
+  .float-text {
+    position: absolute;
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 22px;
+    color: var(--fire3);
+    pointer-events: none;
+    animation: floatUp 0.9s ease-out forwards;
+    text-shadow: 0 0 10px rgba(255,215,0,0.8);
+  }
+
+  @keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-80px) scale(0.7); }
+  }
+
+  /* Energy bar */
+  .energy-section {
+    margin-bottom: 20px;
+  }
+
+  .energy-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .energy-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .energy-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    color: var(--fire2);
+  }
+
+  .energy-bar {
+    height: 8px;
+    background: var(--dark3);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .energy-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--fire1), var(--fire3));
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 8px rgba(255,140,0,0.5);
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    background: var(--dark2);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+  }
+
+  .tab {
+    flex: 1;
+    padding: 8px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+
+  .tab.active {
+    background: linear-gradient(135deg, var(--fire1), var(--fire2));
+    color: white;
+  }
+
+  /* Upgrades */
+  .upgrades-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .upgrade-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .upgrade-card:hover {
+    border-color: var(--fire2);
+    background: var(--dark3);
+  }
+
+  .upgrade-card.purchased {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .upgrade-card.can-afford {
+    border-color: var(--fire3);
+    box-shadow: 0 0 12px rgba(255,215,0,0.15);
+  }
+
+  .upgrade-icon {
+    font-size: 32px;
+    min-width: 40px;
+    text-align: center;
+  }
+
+  .upgrade-info {
+    flex: 1;
+  }
+
+  .upgrade-name {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 3px;
+  }
+
+  .upgrade-desc {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .upgrade-cost {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--fire3);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .upgrade-cost.purchased {
+    color: #4CAF50;
+    font-size: 11px;
+  }
+
+  /* Boost packs */
+  .boost-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .boost-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .boost-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .boost-card:hover::before { opacity: 1; }
+
+  .boost-card.bronze::before { background: linear-gradient(135deg, rgba(205,127,50,0.1), transparent); }
+  .boost-card.silver::before { background: linear-gradient(135deg, rgba(192,192,192,0.1), transparent); }
+  .boost-card.gold::before { background: linear-gradient(135deg, rgba(255,215,0,0.1), transparent); }
+  .boost-card.diamond::before { background: linear-gradient(135deg, rgba(185,242,255,0.1), transparent); }
+  .boost-card.phoenix::before { background: linear-gradient(135deg, rgba(255,69,0,0.15), transparent); }
+
+  .boost-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--fire2);
+  }
+
+  .boost-emoji { font-size: 28px; margin-bottom: 8px; }
+  .boost-name { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+  .boost-price { font-family: 'Orbitron', monospace; font-size: 15px; font-weight: 900; color: var(--fire3); margin-bottom: 6px; }
+  .boost-fenix { font-size: 11px; color: var(--muted); }
+  .boost-fenix span { color: var(--fire2); font-weight: 600; }
+
+  /* Leaderboard */
+  .leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .leader-row {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .leader-row.you {
+    border-color: var(--fire2);
+    background: rgba(255,140,0,0.08);
+  }
+
+  .leader-rank {
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    font-weight: 900;
+    min-width: 28px;
+  }
+
+  .leader-rank.gold { color: #FFD700; }
+  .leader-rank.silver { color: #C0C0C0; }
+  .leader-rank.bronze { color: #CD7F32; }
+
+  .leader-name { flex: 1; font-size: 14px; }
+  .leader-score {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    color: var(--fire3);
+  }
+
+  /* Referral */
+  .ref-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .ref-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--fire3);
+  }
+
+  .ref-desc {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .ref-link {
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    color: var(--fire2);
+    margin-bottom: 12px;
+    word-break: break-all;
+  }
+
+  .copy-btn {
+    background: linear-gradient(135deg, var(--fire1), var(--fire2));
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+    transition: opacity 0.2s;
+  }
+
+  .copy-btn:hover { opacity: 0.9; }
+
+  .ref-bonus {
+    background: var(--dark3);
+    border: 1px solid rgba(255,215,0,0.2);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .ref-bonus-label { font-size: 13px; color: var(--muted); }
+  .ref-bonus-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    color: var(--fire3);
+    font-weight: 700;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--dark3);
+    border: 1px solid var(--fire2);
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 100;
+    white-space: nowrap;
+    color: var(--fire3);
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 420px;
+    background: var(--dark2);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 8px 0 12px;
+    z-index: 50;
+  }
+
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    padding: 4px;
+    transition: all 0.2s;
+  }
+
+  .nav-icon { font-size: 22px; }
+  .nav-label { font-size: 10px; color: var(--muted); }
+  .nav-item.active .nav-label { color: var(--fire2); }
+  .nav-item.active .nav-icon { filter: drop-shadow(0 0 4px rgba(255,140,0,0.8)); }
+
+  .page { display: none; padding-bottom: 80px; }
+  .page.active { display: block; }
+
+  /* Progress bar to next level */
+  .level-progress {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+
+  .level-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+
+  .level-name { color: var(--fire2); font-weight: 600; }
+  .level-next { color: var(--muted); }
+
+  .level-bar {
+    height: 6px;
+    background: var(--dark3);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .level-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--fire1), var(--fire3));
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="logo">FENIX</div>
+    <div class="level-badge" id="levelBadge">🐣 ПТЕНЕЦ</div>
+  </div>
+
+  <!-- TAP PAGE -->
+  <div class="page active" id="page-tap">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">За тап</div>
+        <div class="stat-value" id="perTap">+1</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Пассивно/сек</div>
+        <div class="stat-value" id="perSec">0</div>
+      </div>
+    </div>
+
+    <div class="coin-display">
+      <div class="coin-amount" id="coinAmount">0</div>
+      <div class="coin-label">🔥 FENIX монет</div>
+    </div>
+
+    <div class="tap-area" id="tapArea">
+      <button class="tap-btn" id="tapBtn">
+        <div class="tap-btn-inner">
+          <span>🐦‍🔥</span>
+          <span class="tap-hint">TAP</span>
+        </div>
+      </button>
+    </div>
+
+    <div class="energy-section">
+      <div class="energy-header">
+        <span class="energy-label">⚡ Энергия</span>
+        <span class="energy-value" id="energyVal">1000 / 1000</span>
+      </div>
+      <div class="energy-bar">
+        <div class="energy-fill" id="energyFill" style="width:100%"></div>
+      </div>
+    </div>
+
+    <div class="level-progress">
+      <div class="level-row">
+        <span class="level-name" id="currentLevelName">🐣 Птенец</span>
+        <span class="level-next" id="nextLevelInfo">до 🐦 Птица: 10,000</span>
+      </div>
+      <div class="level-bar">
+        <div class="level-fill" id="levelFill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPGRADES PAGE -->
+  <div class="page" id="page-upgrades">
+    <div class="upgrades-list" id="upgradesList"></div>
+  </div>
+
+  <!-- BOOST PAGE -->
+  <div class="page" id="page-boost">
+    <div style="text-align:center; margin-bottom:20px;">
+      <div style="font-family:'Orbitron',monospace; font-size:18px; font-weight:700; color:var(--fire3); margin-bottom:6px;">💎 BOOST ПАКЕТЫ</div>
+      <div style="font-size:13px; color:var(--muted);">Купи буст — получи реальные $FENIX токены на presale</div>
+    </div>
+
+    <div class="boost-grid">
+      <div class="boost-card bronze" onclick="buyBoost('starter')">
+        <div class="boost-emoji">🥉</div>
+        <div class="boost-name">STARTER</div>
+        <div class="boost-price">$5</div>
+        <div class="boost-fenix">+<span>50,000</span> монет<br>+<span>25,000</span> $FENIX</div>
+      </div>
+      <div class="boost-card silver" onclick="buyBoost('silver')">
+        <div class="boost-emoji">🥈</div>
+        <div class="boost-name">SILVER</div>
+        <div class="boost-price">$20</div>
+        <div class="boost-fenix">+<span>250,000</span> монет<br>+<span>125,000</span> $FENIX</div>
+      </div>
+      <div class="boost-card gold" onclick="buyBoost('gold')">
+        <div class="boost-emoji">🥇</div>
+        <div class="boost-name">GOLD</div>
+        <div class="boost-price">$50</div>
+        <div class="boost-fenix">+<span>750,000</span> монет<br>+<span>375,000</span> $FENIX</div>
+      </div>
+      <div class="boost-card diamond" onclick="buyBoost('diamond')">
+        <div class="boost-emoji">💎</div>
+        <div class="boost-name">DIAMOND</div>
+        <div class="boost-price">$200</div>
+        <div class="boost-fenix">+<span>4,000,000</span> монет<br>+<span>2,000,000</span> $FENIX</div>
+      </div>
+    </div>
+
+    <div class="boost-card phoenix" onclick="buyBoost('phoenix')" style="margin-top:10px; display:flex; align-items:center; gap:16px; text-align:left;">
+      <div class="boost-emoji" style="font-size:40px;">🔥</div>
+      <div style="flex:1">
+        <div class="boost-name" style="font-size:16px;">PHOENIX PACK</div>
+        <div class="boost-fenix" style="margin-top:4px;">+<span>25,000,000</span> монет • +<span>12,500,000</span> $FENIX<br><span style="color:var(--fire3)">Whitelist гарантирован ✅</span></div>
+      </div>
+      <div class="boost-price" style="font-size:20px;">$1000</div>
+    </div>
+
+    <div style="margin-top:16px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px;">
+      <div style="font-size:12px; color:var(--muted); line-height:1.6;">
+        💳 <strong style="color:var(--text)">Оплата:</strong> USDT/BNB на кошелёк<br>
+        📩 После оплаты — напиши в <strong style="color:var(--fire2)">@fenixtoken_bot</strong><br>
+        ⚡ Буст активируется в течение 1 часа
+      </div>
+    </div>
+  </div>
+
+  <!-- LEADERBOARD PAGE -->
+  <div class="page" id="page-leaders">
+    <div style="text-align:center; margin-bottom:16px;">
+      <div style="font-family:'Orbitron',monospace; font-size:18px; font-weight:700; color:var(--fire3); margin-bottom:4px;">🏆 ТОП ИГРОКИ</div>
+      <div style="font-size:12px; color:var(--muted);">Топ 50 получат бонус $FENIX токены</div>
+    </div>
+    <div class="leaderboard-list" id="leaderboardList"></div>
+  </div>
+
+  <!-- REFERRAL PAGE -->
+  <div class="page" id="page-ref">
+    <div class="ref-card">
+      <div class="ref-title">👥 ПРИГЛАСИ ДРУГА</div>
+      <div class="ref-desc">За каждого приглашённого друга получай <strong style="color:var(--fire3)">10,000 FENIX монет</strong><br>Если друг купит буст — <strong style="color:var(--fire3)">+20% от его пакета тебе</strong></div>
       <div class="ref-link" id="refLink">fenix.app/ref/USER123456</div>
       <button class="copy-btn" onclick="copyRef()">📋 Скопировать ссылку</button>
     </div>
+
     <div class="ref-bonus">
-      <div><div class="ref-bonus-label">Приглашено друзей</div><div class="ref-bonus-value" id="refCount">0</div></div>
-      <div style="text-align:right"><div class="ref-bonus-label">Заработано бонусов</div><div class="ref-bonus-value" id="refBonus">0</div></div>
+      <div>
+        <div class="ref-bonus-label">Приглашено друзей</div>
+        <div class="ref-bonus-value" id="refCount">0</div>
+      </div>
+      <div style="text-align:right">
+        <div class="ref-bonus-label">Заработано бонусов</div>
+        <div class="ref-bonus-value" id="refBonus">0</div>
+      </div>
     </div>
   </div>
+
+  <!-- Bottom Nav -->
   <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchPage('tap',this)"><span class="nav-icon">🐦‍🔥</span><span class="nav-label">Тапать</span></div>
-    <div class="nav-item" onclick="switchPage('upgrades',this)"><span class="nav-icon">⚡</span><span class="nav-label">Апгрейды</span></div>
-    <div class="nav-item" onclick="switchPage('boost',this)"><span class="nav-icon">💎</span><span class="nav-label">Буст</span></div>
-    <div class="nav-item" onclick="switchPage('leaders',this)"><span class="nav-icon">🏆</span><span class="nav-label">Топ</span></div>
-    <div class="nav-item" onclick="switchPage('ref',this)"><span class="nav-icon">👥</span><span class="nav-label">Рефералы</span></div>
+    <div class="nav-item active" onclick="switchPage('tap', this)">
+      <span class="nav-icon">🐦‍🔥</span>
+      <span class="nav-label">Тапать</span>
+    </div>
+    <div class="nav-item" onclick="switchPage('upgrades', this)">
+      <span class="nav-icon">⚡</span>
+      <span class="nav-label">Апгрейды</span>
+    </div>
+    <div class="nav-item" onclick="switchPage('boost', this)">
+      <span class="nav-icon">💎</span>
+      <span class="nav-label">Буст</span>
+    </div>
+    <div class="nav-item" onclick="switchPage('leaders', this)">
+      <span class="nav-icon">🏆</span>
+      <span class="nav-label">Топ</span>
+    </div>
+    <div class="nav-item" onclick="switchPage('ref', this)">
+      <span class="nav-icon">👥</span>
+      <span class="nav-label">Рефералы</span>
+    </div>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
+
 <script>
-let state={coins:0,energy:1000,maxEnergy:1000,tapPower:1,passivePerSec:0,level:0,upgrades:{},refs:0,refBonus:0};
-const LEVELS=[{name:'🐣 Птенец',threshold:0},{name:'🐦 Птица',threshold:10000},{name:'🔥 Огненная',threshold:50000},{name:'🐦‍🔥 Феникс',threshold:200000},{name:'⚡ Легенда',threshold:1000000}];
-const UPGRADES=[{id:'wings1',icon:'🪶',name:'Крылья I',desc:'+2 за тап',cost:1000,tapBonus:1,energyBonus:0,passiveBonus:0},{id:'wings2',icon:'🦅',name:'Крылья II',desc:'+5 за тап',cost:10000,tapBonus:3,energyBonus:0,passiveBonus:0},{id:'wings3',icon:'🔥',name:'Огненные крылья',desc:'+10 за тап',cost:50000,tapBonus:5,energyBonus:0,passiveBonus:0},{id:'energy1',icon:'⚡',name:'Огонь I',desc:'+500 макс. энергии',cost:5000,tapBonus:0,energyBonus:500,passiveBonus:0},{id:'energy2',icon:'🌋',name:'Огонь II',desc:'+1000 макс. энергии',cost:25000,tapBonus:0,energyBonus:1000,passiveBonus:0},{id:'auto1',icon:'🤖',name:'Автотап I',desc:'+1 монета/сек',cost:100000,tapBonus:0,energyBonus:0,passiveBonus:1},{id:'auto2',icon:'⚙️',name:'Автотап II',desc:'+5 монет/сек',cost:500000,tapBonus:0,energyBonus:0,passiveBonus:5}];
-const LEADERBOARD=[{name:'CryptoKing',score:8420000},{name:'FireBird99',score:6100000},{name:'MoonHunter',score:4800000},{name:'FenixWhale',score:3200000},{name:'BlockChainer',score:2900000},{name:'DeFiMaster',score:1750000},{name:'CoinFliper',score:1200000},{name:'You',score:0,isYou:true},{name:'HODLer2025',score:0},{name:'SatoshiFan',score:0}];
-function formatNum(n){if(n>=1000000)return(n/1000000).toFixed(1)+'M';if(n>=1000)return(n/1000).toFixed(1)+'K';return Math.floor(n).toString();}
-function updateUI(){
-  document.getElementById('coinAmount').textContent=formatNum(state.coins);
-  document.getElementById('perTap').textContent='+'+state.tapPower;
-  document.getElementById('perSec').textContent=state.passivePerSec;
-  document.getElementById('energyVal').textContent=Math.floor(state.energy)+' / '+state.maxEnergy;
-  document.getElementById('energyFill').style.width=(state.energy/state.maxEnergy*100)+'%';
-  const lvl=getCurrentLevel();state.level=lvl;
-  const ld=LEVELS[lvl],nd=LEVELS[lvl+1];
-  document.getElementById('levelBadge').textContent=ld.name;
-  document.getElementById('currentLevelName').textContent=ld.name;
-  if(nd){const prev=LEVELS[lvl].threshold,prog=(state.coins-prev)/(nd.threshold-prev)*100;document.getElementById('levelFill').style.width=Math.min(prog,100)+'%';document.getElementById('nextLevelInfo').textContent='до '+nd.name+': '+formatNum(nd.threshold-state.coins);}
-  else{document.getElementById('levelFill').style.width='100%';document.getElementById('nextLevelInfo').textContent='Максимальный уровень! 🔥';}
-  LEADERBOARD.find(l=>l.isYou).score=state.coins;
-  renderLeaderboard();renderUpgrades();
+// GAME STATE
+let state = {
+  coins: 0,
+  energy: 1000,
+  maxEnergy: 1000,
+  tapPower: 1,
+  passivePerSec: 0,
+  level: 0,
+  upgrades: {},
+  refs: 0,
+  refBonus: 0
+};
+
+const LEVELS = [
+  { name: '🐣 Птенец', threshold: 0 },
+  { name: '🐦 Птица', threshold: 10000 },
+  { name: '🔥 Огненная', threshold: 50000 },
+  { name: '🐦‍🔥 Феникс', threshold: 200000 },
+  { name: '⚡ Легенда', threshold: 1000000 }
+];
+
+const UPGRADES = [
+  { id: 'wings1', icon: '🪶', name: 'Крылья I', desc: '+2 за тап', cost: 1000, tapBonus: 1, energyBonus: 0, passiveBonus: 0 },
+  { id: 'wings2', icon: '🦅', name: 'Крылья II', desc: '+5 за тап', cost: 10000, tapBonus: 3, energyBonus: 0, passiveBonus: 0 },
+  { id: 'wings3', icon: '🔥', name: 'Огненные крылья', desc: '+10 за тап', cost: 50000, tapBonus: 5, energyBonus: 0, passiveBonus: 0 },
+  { id: 'energy1', icon: '⚡', name: 'Огонь I', desc: '+500 макс. энергии', cost: 5000, tapBonus: 0, energyBonus: 500, passiveBonus: 0 },
+  { id: 'energy2', icon: '🌋', name: 'Огонь II', desc: '+1000 макс. энергии', cost: 25000, tapBonus: 0, energyBonus: 1000, passiveBonus: 0 },
+  { id: 'auto1', icon: '🤖', name: 'Автотап I', desc: '+1 монета/сек', cost: 100000, tapBonus: 0, energyBonus: 0, passiveBonus: 1 },
+  { id: 'auto2', icon: '⚙️', name: 'Автотап II', desc: '+5 монет/сек', cost: 500000, tapBonus: 0, energyBonus: 0, passiveBonus: 5 },
+];
+
+const LEADERBOARD = [
+  { name: 'CryptoKing', score: 8420000 },
+  { name: 'FireBird99', score: 6100000 },
+  { name: 'MoonHunter', score: 4800000 },
+  { name: 'FenixWhale', score: 3200000 },
+  { name: 'BlockChainer', score: 2900000 },
+  { name: 'DeFiMaster', score: 1750000 },
+  { name: 'CoinFliper', score: 1200000 },
+  { name: 'You', score: 0, isYou: true },
+  { name: 'HODLer2025', score: 0 },
+  { name: 'SatoshiFan', score: 0 },
+];
+
+function formatNum(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return Math.floor(n).toString();
 }
-function getCurrentLevel(){for(let i=LEVELS.length-1;i>=0;i--){if(state.coins>=LEVELS[i].threshold)return i;}return 0;}
-document.getElementById('tapBtn').addEventListener('click',function(e){
-  if(state.energy<1){showToast('⚡ Нет энергии! Подожди...');return;}
-  state.coins+=state.tapPower;state.energy=Math.max(0,state.energy-1);
-  const area=document.getElementById('tapArea'),rect=area.getBoundingClientRect();
-  const ft=document.createElement('div');ft.className='float-text';ft.textContent='+'+state.tapPower;
-  ft.style.left=(e.clientX-rect.left-15)+'px';ft.style.top=(e.clientY-rect.top-20)+'px';
-  area.appendChild(ft);setTimeout(()=>ft.remove(),900);updateUI();
+
+function updateUI() {
+  document.getElementById('coinAmount').textContent = formatNum(state.coins);
+  document.getElementById('perTap').textContent = '+' + state.tapPower;
+  document.getElementById('perSec').textContent = state.passivePerSec;
+  document.getElementById('energyVal').textContent = Math.floor(state.energy) + ' / ' + state.maxEnergy;
+  document.getElementById('energyFill').style.width = (state.energy / state.maxEnergy * 100) + '%';
+
+  // Level
+  const lvl = getCurrentLevel();
+  state.level = lvl;
+  const levelData = LEVELS[lvl];
+  const nextData = LEVELS[lvl + 1];
+  document.getElementById('levelBadge').textContent = levelData.name;
+  document.getElementById('currentLevelName').textContent = levelData.name;
+
+  if (nextData) {
+    const prev = LEVELS[lvl].threshold;
+    const progress = (state.coins - prev) / (nextData.threshold - prev) * 100;
+    document.getElementById('levelFill').style.width = Math.min(progress, 100) + '%';
+    document.getElementById('nextLevelInfo').textContent = 'до ' + nextData.name + ': ' + formatNum(nextData.threshold - state.coins);
+  } else {
+    document.getElementById('levelFill').style.width = '100%';
+    document.getElementById('nextLevelInfo').textContent = 'Максимальный уровень! 🔥';
+  }
+
+  // Leaderboard score
+  LEADERBOARD.find(l => l.isYou).score = state.coins;
+  renderLeaderboard();
+  renderUpgrades();
+}
+
+function getCurrentLevel() {
+  for (let i = LEVELS.length - 1; i >= 0; i--) {
+    if (state.coins >= LEVELS[i].threshold) return i;
+  }
+  return 0;
+}
+
+// TAP
+document.getElementById('tapBtn').addEventListener('click', function(e) {
+  if (state.energy < 1) { showToast('⚡ Нет энергии! Подожди...'); return; }
+  state.coins += state.tapPower;
+  state.energy = Math.max(0, state.energy - 1);
+
+  // Float text
+  const area = document.getElementById('tapArea');
+  const rect = area.getBoundingClientRect();
+  const ft = document.createElement('div');
+  ft.className = 'float-text';
+  ft.textContent = '+' + state.tapPower;
+  ft.style.left = (e.clientX - rect.left - 15) + 'px';
+  ft.style.top = (e.clientY - rect.top - 20) + 'px';
+  area.appendChild(ft);
+  setTimeout(() => ft.remove(), 900);
+
+  updateUI();
 });
-setInterval(()=>{if(state.energy<state.maxEnergy){state.energy=Math.min(state.maxEnergy,state.energy+0.33);updateUI();}},1000);
-setInterval(()=>{if(state.passivePerSec>0){state.coins+=state.passivePerSec;updateUI();}},1000);
-function renderUpgrades(){
-  const list=document.getElementById('upgradesList');list.innerHTML='';
-  UPGRADES.forEach(u=>{const bought=state.upgrades[u.id],canAfford=state.coins>=u.cost&&!bought;
-  const div=document.createElement('div');div.className='upgrade-card'+(bought?' purchased':'')+(canAfford?' can-afford':'');
-  div.innerHTML=`<div class="upgrade-icon">${u.icon}</div><div class="upgrade-info"><div class="upgrade-name">${u.name}</div><div class="upgrade-desc">${u.desc}</div></div><div class="upgrade-cost ${bought?'purchased':''}">${bought?'✅ Куплено':formatNum(u.cost)+' 🔥'}</div>`;
-  if(!bought)div.onclick=()=>buyUpgrade(u);list.appendChild(div);});
+
+// Energy regen
+setInterval(() => {
+  if (state.energy < state.maxEnergy) {
+    state.energy = Math.min(state.maxEnergy, state.energy + 0.33);
+    updateUI();
+  }
+}, 1000);
+
+// Passive income
+setInterval(() => {
+  if (state.passivePerSec > 0) {
+    state.coins += state.passivePerSec;
+    updateUI();
+  }
+}, 1000);
+
+// UPGRADES
+function renderUpgrades() {
+  const list = document.getElementById('upgradesList');
+  list.innerHTML = '';
+  UPGRADES.forEach(u => {
+    const bought = state.upgrades[u.id];
+    const canAfford = state.coins >= u.cost && !bought;
+    const div = document.createElement('div');
+    div.className = 'upgrade-card' + (bought ? ' purchased' : '') + (canAfford ? ' can-afford' : '');
+    div.innerHTML = `
+      <div class="upgrade-icon">${u.icon}</div>
+      <div class="upgrade-info">
+        <div class="upgrade-name">${u.name}</div>
+        <div class="upgrade-desc">${u.desc}</div>
+      </div>
+      <div class="upgrade-cost ${bought ? 'purchased' : ''}">${bought ? '✅ Куплено' : formatNum(u.cost) + ' 🔥'}</div>
+    `;
+    if (!bought) div.onclick = () => buyUpgrade(u);
+    list.appendChild(div);
+  });
 }
-function buyUpgrade(u){if(state.coins<u.cost){showToast('❌ Недостаточно монет');return;}if(state.upgrades[u.id])return;state.coins-=u.cost;state.upgrades[u.id]=true;state.tapPower+=u.tapBonus;state.maxEnergy+=u.energyBonus;state.passivePerSec+=u.passiveBonus;showToast('✅ '+u.name+' куплено!');updateUI();}
-function renderLeaderboard(){
-  const sorted=[...LEADERBOARD].sort((a,b)=>b.score-a.score);
-  const list=document.getElementById('leaderboardList');list.innerHTML='';
-  sorted.forEach((p,i)=>{const rank=i+1,rc=rank===1?'gold':rank===2?'silver':rank===3?'bronze':'';
-  const row=document.createElement('div');row.className='leader-row'+(p.isYou?' you':'');
-  row.innerHTML=`<div class="leader-rank ${rc}">#${rank}</div><div class="leader-name">${p.isYou?'👤 '+p.name+' (ты)':p.name}</div><div class="leader-score">${formatNum(p.score)} 🔥</div>`;
-  list.appendChild(row);});
+
+function buyUpgrade(u) {
+  if (state.coins < u.cost) { showToast('❌ Недостаточно монет'); return; }
+  if (state.upgrades[u.id]) return;
+  state.coins -= u.cost;
+  state.upgrades[u.id] = true;
+  state.tapPower += u.tapBonus;
+  state.maxEnergy += u.energyBonus;
+  state.passivePerSec += u.passiveBonus;
+  showToast('✅ ' + u.name + ' куплено!');
+  updateUI();
 }
-function buyBoost(type){const prices={starter:5,silver:20,gold:50,diamond:200,phoenix:1000};showToast(`💎 Отправь $${prices[type]} USDT → @fenixtoken_bot`);}
-function copyRef(){navigator.clipboard.writeText('https://fenix.app/ref/USER123456').catch(()=>{});showToast('📋 Ссылка скопирована!');}
-function switchPage(page,el){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.getElementById('page-'+page).classList.add('active');el.classList.add('active');}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
-renderUpgrades();renderLeaderboard();updateUI();
+
+// LEADERBOARD
+function renderLeaderboard() {
+  const sorted = [...LEADERBOARD].sort((a, b) => b.score - a.score);
+  const list = document.getElementById('leaderboardList');
+  list.innerHTML = '';
+  sorted.forEach((p, i) => {
+    const rank = i + 1;
+    const rankClass = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : '';
+    const row = document.createElement('div');
+    row.className = 'leader-row' + (p.isYou ? ' you' : '');
+    row.innerHTML = `
+      <div class="leader-rank ${rankClass}">#${rank}</div>
+      <div class="leader-name">${p.isYou ? '👤 ' + p.name + ' (ты)' : p.name}</div>
+      <div class="leader-score">${formatNum(p.score)} 🔥</div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+// BOOST
+function buyBoost(type) {
+  const prices = { starter: 5, silver: 20, gold: 50, diamond: 200, phoenix: 1000 };
+  const coins = { starter: 50000, silver: 250000, gold: 750000, diamond: 4000000, phoenix: 25000000 };
+  const fenix = { starter: 25000, silver: 125000, gold: 375000, diamond: 2000000, phoenix: 12500000 };
+  const names = { starter: '🥉 STARTER', silver: '🥈 SILVER', gold: '🥇 GOLD', diamond: '💎 DIAMOND', phoenix: '🔥 PHOENIX' };
+
+  // Show payment modal
+  showPaymentModal(type, prices[type], coins[type], fenix[type], names[type]);
+}
+
+function showPaymentModal(type, price, coinsAmount, fenixAmount, name) {
+  // Remove existing modal
+  const existing = document.getElementById('payModal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'payModal';
+  modal.style.cssText = `
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    z-index: 200; display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  `;
+
+  modal.innerHTML = `
+    <div style="background:#1E1E2E; border:1px solid rgba(255,140,0,0.4); border-radius:16px; padding:24px; max-width:360px; width:100%; text-align:center;">
+      <div style="font-size:40px; margin-bottom:12px;">${name.split(' ')[0]}</div>
+      <div style="font-family:'Orbitron',monospace; font-size:20px; font-weight:900; color:#FFD700; margin-bottom:8px;">${name}</div>
+      <div style="font-size:28px; font-weight:900; color:#FF4500; margin-bottom:16px;">$${price} USDT</div>
+      
+      <div style="background:#12121A; border-radius:10px; padding:14px; margin-bottom:20px; text-align:left;">
+        <div style="font-size:12px; color:#8A7A6A; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;">Как оплатить:</div>
+        <div style="font-size:13px; line-height:1.8; color:#F0E6D3;">
+          1️⃣ Нажми кнопку ниже<br>
+          2️⃣ Открой @CryptoBot<br>
+          3️⃣ Отправь <strong style="color:#FFD700">$${price} USDT</strong> на:<br>
+          &nbsp;&nbsp;&nbsp;<strong style="color:#FF8C00">@Fenixtoken_bot</strong><br>
+          4️⃣ В комментарии напиши:<br>
+          &nbsp;&nbsp;&nbsp;<strong style="color:#FF8C00">BOOST ${type.toUpperCase()}</strong><br>
+          5️⃣ Буст активируем в течение 1 часа ⚡
+        </div>
+      </div>
+
+      <div style="background:#0A1A0A; border:1px solid rgba(76,175,80,0.3); border-radius:8px; padding:10px; margin-bottom:16px; font-size:12px; color:#4CAF50;">
+        ✅ +${(coinsAmount/1000).toFixed(0)}K монет в игре<br>
+        🔥 +${(fenixAmount/1000).toFixed(0)}K реальных $FENIX на presale
+      </div>
+
+      <a href="https://t.me/CryptoBot" target="_blank" style="display:block; background:linear-gradient(135deg,#FF4500,#FF8C00); border-radius:12px; padding:14px; color:white; font-weight:700; font-size:15px; text-decoration:none; margin-bottom:10px;">
+        💳 Открыть CryptoBot
+      </a>
+      <button onclick="document.getElementById('payModal').remove()" style="width:100%; background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px; color:#8A7A6A; font-size:14px; cursor:pointer;">
+        Отмена
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) modal.remove();
+  });
+}
+
+// REFERRAL
+function copyRef() {
+  navigator.clipboard.writeText('https://fenix.app/ref/USER123456').catch(() => {});
+  showToast('📋 Ссылка скопирована!');
+}
+
+// NAVIGATION
+function switchPage(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  el.classList.add('active');
+}
+
+// TOAST
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// INIT
+renderUpgrades();
+renderLeaderboard();
+updateUI();
 </script>
 </body>
 </html>
